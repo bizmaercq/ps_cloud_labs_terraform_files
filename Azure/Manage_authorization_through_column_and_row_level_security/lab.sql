@@ -1,9 +1,9 @@
 --run in master
-CREATE LOGIN [OpsMgr] WITH PASSWORD = 'Qlikviewuser#321'
+CREATE LOGIN [OpsMgr] WITH PASSWORD = 'Bh7pRbVp#q6fXV#'
 GO
-CREATE LOGIN [EngMgr] WITH PASSWORD = 'Qlikviewuser#321'
+CREATE LOGIN [EngMgr] WITH PASSWORD = 'z326b#jT#2RM#zG#'
 GO
-CREATE LOGIN [HrMgr] WITH PASSWORD = 'Qlikviewuser#321'
+CREATE LOGIN [HrMgr] WITH PASSWORD = 'wb#rR1Aks4ZGv2S#'
 GO
 
 CREATE USER [OpsMgr] FOR LOGIN [OpsMgr];
@@ -55,10 +55,10 @@ FROM [dbo].[DimStaffDetails]
 
 
 -- Column level security
---Grant SELECT for the three users on the DimStaffDetails table that you created.
-GRANT SELECT ON DimStaffDetailsSecured(staffID, firstName, lastName, phone, email, role, reportsTo) TO HrMgr;
-GRANT SELECT ON DimStaffDetailsSecured(staffID, firstName, lastName, phone, email, role, reportsTo) TO OpsMgr;
-GRANT SELECT ON DimStaffDetailsSecured(staffID, firstName, lastName, phone, email, role, reportsTo) TO EngMgr;
+--Grant SELECT for the three users on the DimStaffDetailsSecured table that you created.
+GRANT SELECT ON DimStaffDetailsSecured(staffID, firstName, lastName, phone, email, salary, role, reportsTo) TO HrMgr;
+GRANT SELECT ON DimStaffDetailsSecured(firstName, lastName, phone, email, role, reportsTo) TO OpsMgr;
+GRANT SELECT ON DimStaffDetailsSecured(firstName, lastName, phone, email, role, reportsTo) TO EngMgr;
 
 -- excute query as HrMgr
 
@@ -70,7 +70,7 @@ SELECT * FROM [dbo].[DimStaffDetailsSecured]
 --The SELECT permission was denied on the column 'salary' of the object 'DimStaffDetailsSecured', database 'StaffAnalyticsDW', schema 'dbo'.
 
 execute as user = 'HrMgr'
-SELECT staffID, firstName, lastName, phone, email, role, reportsTo FROM [dbo].[DimStaffDetailsSecured]
+SELECT staffID, firstName, lastName, phone, email, role, salary, reportsTo FROM [dbo].[DimStaffDetailsSecured]
 -- this will return records
 
 
@@ -92,7 +92,7 @@ AS
 WHERE @reportsTo = USER_NAME() OR USER_NAME() = 'HrMgr';
 
 
---Create a security policy on the DimStaffDetails table using the inline table-valued function above as a filter predicate. 
+--Create a security policy on the DimStaffDetailsSecured table using the inline table-valued function above as a filter predicate. 
 --The state must be set to ON to enable the policy.
 
 CREATE SECURITY POLICY DimStaffDetailsFilter
@@ -112,10 +112,10 @@ execute as user = 'HrMgr'
 SELECT staffID, firstName, lastName, phone, email, role, reportsTo FROM [dbo].[DimStaffDetailsSecured]
 
 execute as user = 'EngMgr'
-SELECT staffID, firstName, lastName, phone, email, role, reportsTo FROM [dbo].[DimStaffDetailsSecured]
+SELECT firstName, lastName, phone, email, role, reportsTo FROM [dbo].[DimStaffDetailsSecured]
 
 execute as user = 'OpsMgr'
-SELECT staffID, firstName, lastName, phone, email, role, reportsTo FROM [dbo].[DimStaffDetailsSecured]
+SELECT firstName, lastName, phone, email, role, reportsTo FROM [dbo].[DimStaffDetailsSecured]
 
 --The HrMgr should see all rows. The EngMgr and OpsMgr users should only see their team members.
 
