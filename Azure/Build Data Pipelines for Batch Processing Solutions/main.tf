@@ -64,7 +64,7 @@ output "lab_sql_database_id" {
 
 # Azure data lake gen 2
 resource "azurerm_storage_account" "lab_data_lake_gen2" {
-  name                     = "adlg2${formatdate("YYYYMMDDhhmmss",timestamp())}" # concatenate current datetime to form unique resource name
+  name                     = "adl4gb${formatdate("YYYYMMDDhhmmss",timestamp())}" # concatenate current datetime to form unique resource name
   resource_group_name      = azurerm_resource_group.lab_resource_group.name
   location                 = azurerm_resource_group.lab_resource_group.location
   account_tier             = "Standard"
@@ -81,24 +81,14 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "lab_data_lake_gen2_filesys
 
 # Azure data factory
 resource "azurerm_data_factory" "lab_data_factory" {
-  name                = "globomanticsADF"
+  name                = "adf4globomantics"
   location            = azurerm_resource_group.lab_resource_group.location
   resource_group_name = azurerm_resource_group.lab_resource_group.name
 }
 
 resource "azurerm_data_factory_linked_service_azure_sql_database" "lab_data_factory_linked_service_azure_sql_database" {
-  name                = "globomanticsDB_ls"
+  name                = "AZ_DATALAKE_LS"
   resource_group_name = azurerm_resource_group.lab_resource_group.name
   data_factory_name   = azurerm_data_factory.lab_data_factory.name
-  connection_string   = "data source=${azurerm_sql_server.lab_server.fully_qualified_domain_name};initial catalog=master;user id=${azurerm_sql_server.lab_server.administrator_login};Password=${azurerm_sql_server.lab_server.administrator_login_password};integrated security=False;encrypt=True;connection timeout=30"
+  connection_string   = "data source=${azurerm_sql_server.lab_server.fully_qualified_domain_name};initial catalog=${azurerm_sql_database.lab_sql_database.name};user id=${azurerm_sql_server.lab_server.administrator_login};Password=${azurerm_sql_server.lab_server.administrator_login_password};integrated security=False;encrypt=True;connection timeout=30"
 }
-
-# resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "lab_data_factory_linked_service_data_lake_storage_gen2" {
-#   name                  = "example"
-#   resource_group_name   = azurerm_resource_group.lab_resource_group.name
-#   data_factory_name     = azurerm_data_factory.lab_data_factory.name
-#   service_principal_id  = data.azurerm_client_config.current.client_id
-#   service_principal_key = "exampleKey"
-#   tenant                = data.azurerm_client_config.current.tenant_id
-#   url                   = "https://${azurerm_storage_account.lab_data_lake_gen2.name}.dfs.core.windows.net/"
-# }
