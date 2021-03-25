@@ -87,7 +87,7 @@ resource "azurerm_data_factory" "lab_data_factory" {
 }
 
 resource "azurerm_data_factory_linked_service_azure_sql_database" "lab_data_factory_linked_service_azure_sql_database" {
-  name                = "AZ_DATALAKE_LS"
+  name                = "AZ_SQL_DATABASE_LS"
   resource_group_name = azurerm_resource_group.lab_resource_group.name
   data_factory_name   = azurerm_data_factory.lab_data_factory.name
   connection_string   = "data source=${azurerm_sql_server.lab_server.fully_qualified_domain_name};initial catalog=${azurerm_sql_database.lab_sql_database.name};user id=${azurerm_sql_server.lab_server.administrator_login};Password=${azurerm_sql_server.lab_server.administrator_login_password};integrated security=False;encrypt=True;connection timeout=30"
